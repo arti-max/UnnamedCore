@@ -270,12 +270,8 @@ class mainLib {
 
 		if(!empty($_POST["udid"]) AND $_POST['gameVersion'] < 20 AND $unregisteredSubmissions) 
 		{
-			$id = ExploitPatch::remove($_POST["udid"]);
+			$id = $_POST["udid"];
 			if(is_numeric($id)) exit("-1");
-		}
-		elseif(!empty($_POST["accountID"]) AND $_POST["accountID"]!="0")
-		{
-			$id = GJPCheck::getAccountIDOrDie();
 		}
 		else
 		{
@@ -283,22 +279,18 @@ class mainLib {
 		}
 		return $id;
 	}
-	public function getUserID($extID, $userName = "Undefined") {
+	public function getUserID($udid, $userName = "Undefined") {
 		include __DIR__ . "/connection.php";
-		if(is_numeric($extID)){
-			$register = 1;
-		}else{
-			$register = 0;
-		}
-		$query = $db->prepare("SELECT userID FROM users WHERE extID LIKE BINARY :id");
-		$query->execute([':id' => $extID]);
+		
+		$query = $db->prepare("SELECT userID FROM users WHERE udid LIKE BINARY :id");
+		$query->execute([':id' => $udid]);
 		if ($query->rowCount() > 0) {
 			$userID = $query->fetchColumn();
 		} else {
-			$query = $db->prepare("INSERT INTO users (isRegistered, extID, userName, lastPlayed)
-			VALUES (:register, :id, :userName, :uploadDate)");
+			$query = $db->prepare("INSERT INTO users (udid, userName, lastPlayed)
+			VALUES (:id, :userName, :uploadDate)");
 
-			$query->execute([':id' => $extID, ':register' => $register, ':userName' => $userName, ':uploadDate' => time()]);
+			$query->execute([':id' => $udid, ':userName' => $userName, ':uploadDate' => time()]);
 			$userID = $db->lastInsertId();
 		}
 		return $userID;
