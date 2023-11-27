@@ -2,7 +2,7 @@
 include_once __DIR__ . "/ip_in_range.php";
 class lib {
 	public function getUserID($udid, $userName = "Undefined") {
-		include __DIR__ . "/connection.php";
+		include __DIR__ . "/db.php";
 		$query = $db->prepare("SELECT userID FROM users WHERE udid LIKE BINARY :id");
 		$query->execute([':id' => $udid]);
 		if ($query->rowCount() > 0) {
@@ -17,7 +17,7 @@ class lib {
 		return $userID;
 	}
 	public function getUDID($userID) {
-		include __DIR__ . "/connection.php";
+		include __DIR__ . "/db.php";
 		$query = $db->prepare("SELECT udid FROM users WHERE userID = :id");
 		$query->execute([':id' => $userID]);
 		if ($query->rowCount() > 0) {
